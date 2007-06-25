@@ -66,8 +66,8 @@ require File.dirname(__FILE__) + '/help'
 #
 class Sake
   module Version
-    Major  = '0'
-    Minor  = '1'
+    Major  = '1'
+    Minor  = '0'
     Tweak  = '0'
     String = [ Major, Minor, Tweak ].join('.')
   end
