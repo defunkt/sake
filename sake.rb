@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+#require 'rake-0.7.2/lib/rake'
 require 'rake'
 require 'fileutils'
 
@@ -109,8 +110,12 @@ class Sake
   end
 
   def fresh_task_path(file)
+    file = file[/\.rake$/] ? file : "#{file}.rake"
+
     if File.exists? task = task_path(file)
-      task_path("#{Time.now.to_i}.rake")
+      file_parts = file.split('.')
+      file = [ file_parts[0...-1], Time.now.to_i, 'rake' ].flatten
+      task_path(file * '.')
     else
       task 
     end
@@ -179,6 +184,11 @@ module Rake
         comment = "   # #{t.comment}" if t.comment
         printf "sake %-#{width}s#{comment}\n", t.name
       end
+    end
+
+    def have_rakefile
+      @rakefile = ''
+      true
     end
   end
 end
