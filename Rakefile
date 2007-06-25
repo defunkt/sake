@@ -13,6 +13,7 @@ begin
     p.url = "http://errtheblog.com/"
     p.author = 'Chris Wanstrath'
     p.email = "chris@ozmm.org"
+    p.extra_deps << ['ruby2ruby', '>=1.1.6']
     p.test_globs = 'test/*_test.rb' 
   end
 
