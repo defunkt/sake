@@ -6,7 +6,7 @@ require 'fileutils'
 
 class Sake
   def initialize(args)
-    FileUtils.mkdir task_directory unless File.exists? task_directory
+    ensure_task_directory_exists
     @args   = args
     @target = detect_target(args)
     @source = detect_source(args)
@@ -87,6 +87,10 @@ class Sake
 
   def task_directory
     File.join(File.expand_path('~'), '.sake')
+  end
+
+  def ensure_task_directory_exists
+    FileUtils.mkdir task_directory unless File.exists? task_directory
   end
 
   def task_path(file)
