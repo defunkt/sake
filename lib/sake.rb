@@ -15,11 +15,13 @@ rescue LoadError
 end
 
 ##
-# Show all Sake tasks (but no local Rake tasks).
+# Show all Sake tasks (but no local Rake tasks), optionally only those matching a pattern.
 #   $ sake -T
+#   $ sake -T db
 #
-# Show tasks in a Rakefile.
+# Show tasks in a Rakefile, optionally only those matching a pattern.
 #   $ sake -T file.rake
+#   $ sake -T file.rake db
 #
 # Install tasks from a Rakefile, optionally specifying specific tasks.
 #   $ sake -i Rakefile
@@ -82,16 +84,21 @@ class Sake
   # likewise).
   def run
     ##
-    # Examine a Rakefile.
+    # Show Sake tasks in the store or in a file, optionally searching for a pattern.
+    # $ sake -T 
+    # $ sake -T db
     # $ sake -T file.rake
-    if (index = @args.index('-T')) && (file = @args[index+1])
-      return show_tasks(TasksFile.parse(file).tasks)
+    # $ sake -T file.rake db
+    if index = @args.index('-T')
+      begin
+        tasks   = TasksFile.parse(@args[index + 1]).tasks
+        pattern = @args[index + 2]
+      rescue
+        tasks   = Store.tasks.sort
+        pattern = @args[index + 1]
+      end
 
-    ##
-    # Show all Sake tasks (but no local Rake tasks).
-    # $ sake -T
-    elsif index || @args.empty?
-      return show_tasks(Store.tasks.sort, @args[index.to_i+1])
+      return show_tasks(tasks, pattern)
 
     ##
     # Install a Rakefile or a single Rake task
