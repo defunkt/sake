@@ -18,14 +18,21 @@ end
 # Show all Sake tasks (but no local Rake tasks).
 #   $ sake -T
 #
-# Show tasks in a Rake file.
+# Show tasks in a Rakefile.
 #   $ sake -T file.rake
 #
-# Install all tasks in a Rake file or a single Rake task
+# Install tasks from a Rakefile, optionally specifying specific tasks.
 #   $ sake -i Rakefile
-#   $ sake -i Rakefile db:migrate
+#   $ sake -i Rakefile db:remigrate
+#   $ sake -i Rakefile db:remigrate routes
 #
-# Run a Sake task.
+# Examine the source of a Rake task.
+#   $ sake -e routes
+# 
+# You can also examine the source of a task not yet installed. 
+#   $ sake -e Rakefile db:remigrate
+#
+# Invoke a Sake task.
 #   $ sake <taskname>
 #
 # Some Sake tasks may depend on tasks which exist only locally.
@@ -75,9 +82,9 @@ class Sake
   # likewise).
   def run
     ##
-    # Examine a Rake file.
+    # Examine a Rakefile.
     # $ sake -T file.rake
-    if (index = @args.index('-T')) && (file = @args[index+1]).is_file?
+    if (index = @args.index('-T')) && (file = @args[index+1])
       return show_tasks(TasksFile.parse(file).tasks)
 
     ##
@@ -87,11 +94,18 @@ class Sake
       return show_tasks(Store.tasks.sort, @args[index.to_i+1])
 
     ##
-    # Install a Rake file or a single Rake task
+    # Install a Rakefile or a single Rake task
     # $ sake -i Rakefile
     # $ sake -i Rakefile db:migrate
     elsif index = @args.index('-i')
       return install(index)
+
+    ##
+    # Examine a Rake task
+    #   $ sake -e routes
+    #   $ sake -e Rakefile db:remigrate
+    elsif index = @args.index('-e')
+      return examine(index)
 
     ##
     # Start a Mongrel handler which will serve local Rake tasks
@@ -125,15 +139,13 @@ class Sake
   end
 
   def install(index)
-    unless (file = @args[index+1]) && file.is_file?
-      die "=> `#{file}' is not a Rakefile, sorry." 
-    end
+    die "=> I need a Rakefile." unless file = @args[index+1]
 
     tasks = TasksFile.parse(file).tasks
 
     # We may want to install a specific task
-    if target_task = @args[index + 2]
-      tasks = tasks.select { |task| task.name == target_task }
+    unless (target_tasks = @args[index + 2..-1]).empty?
+      tasks = tasks.select { |task| target_tasks.include? task.name }
     end
 
     # No duplicates.
@@ -141,13 +153,34 @@ class Sake
       if Store.has_task? task
         puts "!! Task `#{task}' already exists in #{Store.path}"
       else
-        puts "=> Installing task `#{task}'", task.to_ruby, ''
+        puts "=> Installing task `#{task}'"
         Store.add_task task
       end
     end
 
     # Commit.
     Store.save!
+  end
+
+  def examine(index)
+    ##
+    # Can be -e file task or -e task, which defaults to Store.path
+    if @args[index + 2]
+      file = @args[index + 1]
+      task = @args[index + 2]
+    else
+      task = @args[index + 1]
+    end
+
+    tasks = file ? TasksFile.parse(file).tasks : Store.tasks
+
+    if tasks[task]
+      puts tasks[task].to_ruby
+    else
+      error = "=> Can't find task `#{task}'"
+      error << " in #{file}" if file
+      die error
+    end
   end
 
   def serve_tasks
@@ -164,9 +197,24 @@ class Sake
     Rake.application.run
   end
 
+
+  ##
+  # Lets us do:
+  #   tasks = TasksFile.parse('Rakefile').tasks
+  #   task  = tasks['db:remigrate']
+  class TasksArray < Array
+    def [](name_or_index)
+      if name_or_index.is_a? String
+        detect { |task| task.name == name_or_index }
+      else
+        super
+      end
+    end
+  end
+
   ##
   # This class represents a Rake task file, in the traditional sense.
-  # It takes on parameter: the path to a Rake file.  When instantiated,
+  # It takes on parameter: the path to a Rakefile.  When instantiated,
   # it will read the file and parse out the rake tasks, storing them in
   # a 'tasks' array.  This array can be accessed directly:
   #
@@ -188,8 +236,6 @@ class Sake
     # `rm -rf` in the Rakefile itself.  To ensure this, we need to set a 
     # safelevel before parsing the Rakefile in question.
     def self.parse(file)
-      raise "#{file} is not a Rakefile" unless file.is_file?
-
       body = open(file).read
 
       instance = new
@@ -199,7 +245,7 @@ class Sake
 
     def initialize
       @namespace = []
-      @tasks     = []
+      @tasks     = TasksArray.new
       @comment   = nil
     end
 
@@ -326,7 +372,7 @@ class Sake
   end
 
   ##
-  # The store is, as of writing, a single Rake file: ~/.sake
+  # The store is, as of writing, a single Rakefile: ~/.sake
   # When we add new tasks, we just re-build this file.  Over
   # and over.
   module Store
