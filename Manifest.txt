@@ -4,3 +4,5 @@
 ./lib/help.rb
 ./Manifest.txt
 ./Rakefile
+./README
+./LICENSE
