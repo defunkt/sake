@@ -162,8 +162,9 @@ class Sake
     Store.save!
   end
 
+  ##
+  # There is a lot of guesswork inside this method.  Sorry.
   def examine(index)
-    ##
     # Can be -e file task or -e task, which defaults to Store.path
     if @args[index + 2]
       file = @args[index + 1]
@@ -172,15 +173,23 @@ class Sake
       task = @args[index + 1]
     end
 
+    # Try to find the task we think they asked for.
     tasks = file ? TasksFile.parse(file).tasks : Store.tasks
 
     if tasks[task]
-      puts tasks[task].to_ruby
-    else
-      error = "=> Can't find task `#{task}'"
-      error << " in #{file}" if file
-      die error
+      die tasks[task].to_ruby 
     end
+
+    # Didn't find the task.  See if it's a file and, if so, spit
+    # it out.
+    unless (tasks = TasksFile.parse(task).tasks).empty?
+      die tasks.to_ruby 
+    end
+
+    # Failure.  On all counts.
+    error = "=> Can't find task (or file) `#{task}'"
+    error << " in #{file}" if file
+    die error
   end
 
   def serve_tasks
@@ -197,7 +206,6 @@ class Sake
     Rake.application.run
   end
 
-
   ##
   # Lets us do:
   #   tasks = TasksFile.parse('Rakefile').tasks
@@ -209,6 +217,12 @@ class Sake
       else
         super
       end
+    end
+
+    ##
+    # The source of all these tasks.
+    def to_ruby
+      map { |task| task.to_ruby }.join("\n")
     end
   end
 
@@ -298,7 +312,7 @@ class Sake
     ##
     # Call to_ruby on all our tasks and return a concat'd string of them.
     def to_ruby
-      @tasks.map { |task| task.to_ruby }.join("\n")
+      @tasks.to_ruby
     end
 
     ##
