@@ -8,8 +8,8 @@ begin
 
   Echoe.new('sake', Sake::Version::String) do |p|
     p.rubyforge_name = 'sake'
-    p.summary = "sake tastes great and helps maintain system-level Rake files"
-    p.description = "sake tastes great and helps maintain system-level Rake files"
+    p.summary = "Sake tastes great and helps maintain system-level Rake files."
+    p.description = "Sake tastes great and helps maintain system-level Rake files."
     p.url = "http://errtheblog.com/"
     p.author = 'Chris Wanstrath'
     p.email = "chris@ozmm.org"

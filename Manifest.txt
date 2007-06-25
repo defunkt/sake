@@ -1,12 +1,5 @@
-./bin/sake
-./lib/Rakefile
-./lib/sake/action.rb
-./lib/sake/actions/default.rb
-./lib/sake/actions/install.rb
-./lib/sake/actions/version.rb
-./lib/sake/hacks.rb
-./lib/sake/rake_faker.rb
-./lib/sake/tasks.rb
-./lib/sake.rb
 ./Manifest.txt
 ./Rakefile
+./sake.rb
+./serve.rb
+./two
