@@ -17,10 +17,7 @@ class Sake
       daemonize = args.include? '-d'
 
       config = Mongrel::Configurator.new :host => "127.0.0.1" do
-        listener(:port => port) do 
-          uri "/", :handler => handler.new 
-          uri "/favicon.ico", :handler => Mongrel::Error404Handler.new('Not Found')
-        end
+        listener(:port => port) { uri "/", :handler => handler.new }
         daemonize(:cwd => '.', :log_file => 'sake.log') if daemonize
         run
       end
@@ -39,8 +36,6 @@ class Sake
       def process(request, response)
         uri    = request.params['PATH_INFO'].sub(/^\//, '')
         status = uri.empty? ? 200 : 404
-        #body   = status == 200 ? Store.file : 'Not Found' 
-        # TODO: ruby2ruby is falling down
         body   = status == 200 ? Store.to_ruby : 'Not Found' 
 
         response.start(status) do |headers, output|

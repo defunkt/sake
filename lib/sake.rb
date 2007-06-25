@@ -150,6 +150,7 @@ class Sake
   end
 
   def serve_tasks
+    require 'server'
     Server.start(@args)
   end
 
