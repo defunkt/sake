@@ -1,0 +1,3 @@
+./Manifest.txt
+./Rakefile
+./sake.rb
