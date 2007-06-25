@@ -14,7 +14,7 @@ class Sake
 
     def sake_file(string)
       task_files.detect do |file|
-        RakeFaker.new(file).tasks.include? string
+        file_tasks(file).include? string
       end
     end
 
@@ -23,7 +23,7 @@ class Sake
     end
 
     def task_path(file)
-      file = "#{file}.rake" unless file[/.rake$/]
+      file = "#{file}.rake" unless file[/\.rake$/]
       File.join(sake_directory, file)
     end
 
