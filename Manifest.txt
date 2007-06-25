@@ -1,5 +1,5 @@
+./bin/sake
+./lib/sake.rb
+./lib/server.rb
 ./Manifest.txt
 ./Rakefile
-./sake.rb
-./serve.rb
-./two
