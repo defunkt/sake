@@ -13,6 +13,7 @@ begin
 rescue LoadError
   die "=> Sake requires the ruby2ruby gem and Ruby 1.8.6."
 end
+require File.dirname(__FILE__) + '/help'
 
 ##
 # Show all Sake tasks (but no local Rake tasks), optionally only those matching a pattern.
@@ -132,6 +133,11 @@ class Sake
     # Prints Sake and Rake versions.
     elsif @args.include? '--version'
       version
+
+    ##
+    # Prints out the help screen.
+    elsif @args.include? '-h' or @args.include? '--help'
+      return Help.display
     end
 
     ##

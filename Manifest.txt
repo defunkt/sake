@@ -1,5 +1,6 @@
 ./bin/sake
 ./lib/sake.rb
 ./lib/server.rb
+./lib/help.rb
 ./Manifest.txt
 ./Rakefile
