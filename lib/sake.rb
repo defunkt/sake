@@ -140,7 +140,7 @@ class Sake
       if Store.has_task? task
         puts "!! Task `#{task}' already exists in #{Store.path}"
       else
-        puts "=> Installing task `#{task}'"
+        puts "=> Installing task `#{task}'", task.to_ruby, ''
         Store.add_task task
       end
     end
@@ -171,13 +171,16 @@ class Sake
   #   file = Sake::TasksFile.new('Rakefile')
   #   puts file.tasks.inspect
   class TasksFile
-    attr_reader :tasks
+    attr_reader :tasks, :file
 
     def initialize(file)
       @namespace = []
       @tasks     = []
       @comment   = nil
-      instance_eval File.read(file) if file.is_file?
+
+      if file.is_file?
+        instance_eval @file = File.read(file)
+      end
     end
 
     ##
