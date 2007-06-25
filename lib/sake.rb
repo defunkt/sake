@@ -454,7 +454,7 @@ class Sake
   end
 end
 
-module Rake
+module Rake # :nodoc: all
   class Application
     ##
     # Show the tasks as 'sake' tasks.
@@ -504,19 +504,19 @@ end
 
 ##
 # Hacks which give us "Rakefile".is_file? 
-class String
+class String # :nodoc: 
   def is_file?
     File.exists? self
   end
 end
 
-class Nil
+class Nil # :nodoc: 
   def is_file?
     false
   end
 end
 
-def die(*message)
+def die(*message) # :nodoc: 
   puts message 
   exit
 end
