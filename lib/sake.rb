@@ -42,10 +42,6 @@ class Sake
   def detect_source(args)
     args.detect { |arg| arg[/(\w+:\/\/)/] }
   end
-
-  def die(*message)
-    puts(*message) || exit
-  end
 end
 
 Sake.new(ARGV).invoke if $0 == __FILE__

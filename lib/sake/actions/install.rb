@@ -12,6 +12,10 @@ class Sake
     end
 
     def invoke
+      if target_tasks.empty?
+        die "No rake tasks found in #{@options[:target]}."
+      end
+
       if target_tasks.size != target_tasks.uniq.size
         puts "Can't install with duplicate tasks.  The following tasks are duped in #{@options[:target]}: "
         die with_indent(target_tasks & target_tasks)
@@ -27,9 +31,9 @@ class Sake
       puts "Installed these tasks: "
       puts with_indent(target_tasks)
     end
-  end
 
-  def with_indent(array)
-    array.map { |task| "  #{task}" }
+    def with_indent(array)
+      array.map { |task| "  #{task}" }
+    end
   end
 end

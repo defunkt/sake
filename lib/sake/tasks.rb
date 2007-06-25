@@ -9,7 +9,7 @@ class Sake
     end
 
     def task_files 
-      Dir["#{task_directory}/*.rake"]
+      Dir["#{sake_directory}/*.rake"]
     end
 
     def sake_file(string)
@@ -18,20 +18,20 @@ class Sake
       end
     end
 
-    def task_directory
+    def sake_directory
       File.join(File.expand_path('~'), '.sake')
     end
 
     def task_path(file)
       file = "#{file}.rake" unless file[/.rake$/]
-      File.join(task_directory, file)
+      File.join(sake_directory, file)
     end
 
     def fresh_task_path(file)
       if File.exists? task_file = task_path(file)
         file_parts = task_file.split('.')
         task_file = [ file_parts[0...-1], Time.now.to_i, 'rake' ].flatten
-        task_path(task_file * '.')
+        task_file * '.'
       else
         task 
       end

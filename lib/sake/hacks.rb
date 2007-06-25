@@ -50,3 +50,7 @@ class Symbol
     to_s.classify
   end
 end
+
+def die(*message)
+  puts(*message) || exit
+end
