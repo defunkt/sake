@@ -413,7 +413,7 @@ class Sake
       out << " do\n"
       
       # get rid of the proc { / } lines
-      out << @body.to_ruby.split("\n")[1...-1].join("\n")
+      out << @body.to_ruby.split("\n")[1...-1].join("\n") rescue nil
 
       out << "\nend\n"
     end
