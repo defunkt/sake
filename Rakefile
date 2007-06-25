@@ -1,10 +1,22 @@
-desc "Install sake"
-task :install do
-  `sudo cp sake.rb /usr/local/bin/sake`
-  `sudo chmod 755 /usr/local/bin/sake`
-end
+require 'rubygems'
+require 'rake'
 
-desc "Uninstall sake"
-task :uninstall do
-  `sudo rm /usr/local/bin/sake`
+version = '0.1.0'
+
+begin
+  require 'echoe'
+
+  Echoe.new('Sake', version) do |p|
+    p.rubyforge_name = 'Sake'
+    p.summary = "Sake tastes great and helps maintain system-level Rake files"
+    p.description = "Sake tastes great and helps maintain system-level Rake files"
+    p.url = "http://errtheblog.com/"
+    p.author = 'Chris Wanstrath'
+    p.email = "chris@ozmm.org"
+    p.test_globs = 'test/*_test.rb' 
+  end
+
+rescue LoadError => boom
+  puts "You are missing a dependency required for meta-operations on this gem."
+  puts "#{boom.to_s.capitalize}."
 end
