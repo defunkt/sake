@@ -68,6 +68,8 @@ class Sake
     # TODO: love silence
     Rake.application.options.silent = true
 
+    Rake.application.add_loader('rake', Loader.new)
+
     import *task_files
     Rake.application.run
   end
@@ -110,12 +112,10 @@ class Sake
   end
 
   def fresh_task_path(file)
-    file = file[/\.rake$/] ? file : "#{file}.rake"
-
-    if File.exists? task = task_path(file)
-      file_parts = file.split('.')
-      file = [ file_parts[0...-1], Time.now.to_i, 'rake' ].flatten
-      task_path(file * '.')
+    if File.exists? task_file = task_path(file)
+      file_parts = task_file.split('.')
+      task_file = [ file_parts[0...-1], Time.now.to_i, 'rake' ].flatten
+      task_path(task_file * '.')
     else
       task 
     end
@@ -142,6 +142,15 @@ class Sake
 
     def task(name)
       @tasks << [ @namespace, name ].flatten * ':'
+    end
+  end
+
+  class Loader < Rake::DefaultLoader
+    def load(file)
+      super
+    rescue Object => e
+      puts "=> There was an error loading #{file}:"
+      puts "   %s" % e.to_s
     end
   end
 end
