@@ -35,6 +35,11 @@ require File.dirname(__FILE__) + '/help'
 # You can also examine the source of a task not yet installed. 
 #   $ sake -e Rakefile db:remigrate
 #
+# Uninstall an installed task.
+#   $ sake -u db:remigrate
+#
+# Can be passed one or more tasks.
+#
 # Invoke a Sake task.
 #   $ sake <taskname>
 #
@@ -109,6 +114,11 @@ class Sake
       return install(index)
 
     ##
+    # Uninstall one or more Rake tasks from the Sake store.
+    elsif index = @args.index('-u')
+      return uninstall(index)
+
+    ##
     # Examine a Rake task
     #   $ sake -e routes
     #   $ sake -e Rakefile db:remigrate
@@ -172,6 +182,21 @@ class Sake
     end
 
     # Commit.
+    Store.save!
+  end
+
+  def uninstall(index)
+    die "# -u option needs one or more installed tasks" if (tasks = @args[index+1..-1]).empty?
+
+    tasks.each do |name|
+      if task = Store.tasks[name]
+        puts "# Uninstalling `#{task}'.  Here it is, for reference:", task.to_ruby, ''
+        Store.remove_task(task)
+      else
+        puts "# You don't have task `#{name}' installed.", ''
+      end
+    end
+
     Store.save!
   end
 
@@ -351,8 +376,8 @@ class Sake
 
     ##
     # Hunt for and remove a particular task.
-    def remove_task(task_name)
-      @tasks.reject! { |task| task.name == task_name }
+    def remove_task(target_task)
+      @tasks.reject! { |task| task.name == target_task.name }
     end
   end
 
