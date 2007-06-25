@@ -141,6 +141,7 @@ class Sake
     end
 
     def task(name)
+      name = name.is_a?(Hash) ? name.keys.first : name
       @tasks << [ @namespace, name ].flatten * ':'
     end
   end
@@ -183,9 +184,14 @@ module Rake
     end
 
     def display_tasks_and_comments
+      tasks = self.tasks
+
       if pattern = options.show_task_pattern
-        tasks = self.tasks.select { |t| t.name[pattern] || t.comment.to_s[pattern] }
+        tasks = tasks.select { |t| t.name[pattern] || t.comment.to_s[pattern] }
       end
+
+      sake_tasks = Sake.new.sake_tasks
+      tasks      = tasks.select { |t| sake_tasks.include? t.name }
 
       width = tasks.collect { |t| t.name.length }.max
 
@@ -193,11 +199,6 @@ module Rake
         comment = "   # #{t.comment}" if t.comment
         printf "sake %-#{width}s#{comment}\n", t.name
       end
-    end
-
-    def have_rakefile
-      @rakefile = ''
-      true
     end
   end
 end
