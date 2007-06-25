@@ -7,8 +7,12 @@ class Sake
       super
     end
 
-    def ensure_task_directory_exists
-      FileUtils.mkdir task_directory unless File.exists? task_directory
+    def invokable?
+      @options[:target] && File.exists?(@options[:target])
+    end
+
+    def halt_after_invokation?
+      true
     end
 
     def invoke
@@ -30,6 +34,10 @@ class Sake
       FileUtils.cp @options[:target], fresh_task_path(@options[:target])
       puts "Installed these tasks: "
       puts with_indent(target_tasks)
+    end
+
+    def ensure_task_directory_exists
+      FileUtils.mkdir task_directory unless File.exists? task_directory
     end
 
     def with_indent(array)

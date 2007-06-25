@@ -1,31 +1,50 @@
-require "sake/actions/install"
-require "sake/actions/invoke_rake"
-
 class Sake
   class Action
     include Tasks
 
-    @@children = []
-    def self.children; @@children end
+    def invoke
+      raise "Override #invoke with your action's action."
+    end
+
+    def invokable?
+      raise "Override #invokable? to return true if your action should execute."
+    end
+
+    ##
+    # Override #halt_after_invokation? to return true or false depending on whether
+    # you want execution to halt or not after this action is invoked.  By default,
+    # actions are chained.
+    def halt_after_invokation?
+      false
+    end
+
+    @@actions = []
 
     def initialize(options = {})
       @options = options
     end
 
     def self.inherited(klass)
-      @@children << klass
+      @@actions << klass unless klass == Default
     end
 
     def self.invoke(options = {})
-      action = @@children.detect do |child|
-        child.new(options).invoke
+      raise "#invoke must be overriden" unless self == Action
+
+      invoked = false
+
+      @@actions.each do |action|
+        action = action.new(options)
+
+        next unless action.invokable?
+        invoked = true
+
+        action.invoke 
+
+        return if action.halt_after_invokation?
       end
 
-      task = :invoke_rake
-      if options[:target] && File.exists?(options[:target])
-        task = :install
-      end
-      task
+      Default.new(options).invoke unless invoked
     end
 
     ##

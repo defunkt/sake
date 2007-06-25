@@ -3,6 +3,7 @@
 ./lib/sake/action.rb
 ./lib/sake/actions/install.rb
 ./lib/sake/actions/invoke_rake.rb
+./lib/sake/actions/version.rb
 ./lib/sake/rake_faker.rb
 ./lib/sake/hacks.rb
 ./lib/sake/tasks.rb

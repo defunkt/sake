@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'rake'
 
-version = '0.1.0'
+require 'lib/sake' unless defined? Sake
 
 begin
   require 'echoe'
 
-  Echoe.new('sake', version) do |p|
+  Echoe.new('sake', Sake::Version::String) do |p|
     p.rubyforge_name = 'sake'
     p.summary = "sake tastes great and helps maintain system-level Rake files"
     p.description = "sake tastes great and helps maintain system-level Rake files"

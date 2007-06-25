@@ -8,7 +8,7 @@ class Sake
     end
   end
 
-  class InvokeRake < Action
+  class Default < Action
     def invoke 
       Rake.application = Rake::Application.new
 

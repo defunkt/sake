@@ -3,11 +3,16 @@
 require 'rubygems'
 require 'rake'
 
+$:.unshift File.dirname(__FILE__)
+
 require 'sake/rake_faker'
 require 'sake/hacks'
 require 'sake/tasks'
 
 require 'sake/action'
+Dir[File.dirname(__FILE__) + '/sake/actions/*'].each do |action|
+  require action
+end
 
 class Sake
   extend Tasks
