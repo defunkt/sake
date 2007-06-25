@@ -11,14 +11,16 @@ class Sake
       else
         port = 4567
       end
+  
+      daemoned = args.include? '-d'
 
       config = Mongrel::Configurator.new :host => "127.0.0.1" do
+        daemonize(:cwd => '.', :log_file => 'sake.log') if daemoned
         listener(:port => port) { uri "/", :handler => Handler.new }
-        daemonize(:cwd => '.', :log_file => 'sake.log') if args.include? '-d'
         run
       end
 
-      puts "=> Serving warm sake tasks on port #{port}..."
+      puts "# Serving warm sake tasks on port #{port}..." unless daemoned
       config.join
     end
 
