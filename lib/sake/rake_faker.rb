@@ -14,7 +14,7 @@ class Sake
       @namespace.delete name
     end
 
-    def task(name)
+    def task(name, &block)
       name = name.is_a?(Hash) ? name.keys.first : name
       @tasks << [ @namespace, name ].flatten * ':'
     end

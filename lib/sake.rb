@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'rake'
+require 'ruby2ruby'
 
 $:.unshift File.dirname(__FILE__)
 
