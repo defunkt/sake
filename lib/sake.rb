@@ -448,7 +448,20 @@ class Sake
     end
 
     def path
-      File.join(File.expand_path('~'), '.sake')
+      if PLATFORM =~ /win32/
+        win32_path
+      else
+        File.join(File.expand_path('~'), '.sake')
+      end
+    end
+
+    def win32_path
+      unless File.exists?(win32home = ENV['HOMEDRIVE'] + ENV['HOMEPATH'])
+        puts "# No HOMEDRIVE or HOMEPATH environment variable.",  
+             "# Sake needs to know where it should save Rake tasks!"
+      else
+        File.join(win32home, 'Sakefile')
+      end
     end
 
     def save!
@@ -492,17 +505,6 @@ module Rake # :nodoc: all
     def have_rakefile(*args)
       @rakefile ||= ''
       sake_original_have_rakefile(*args) || true
-    end
-  end
-
-  class Task
-    ##
-    # We want only run a Sake task -- not any other matching
-    # or duplicate tasks.
-    def enhance(deps=nil, &block)
-      @prerequisites |= deps if deps
-      @actions = [block] if block_given? 
-      self
     end
   end
 end
