@@ -7,7 +7,7 @@ begin
   require 'echoe'
 
   Echoe.new('sake', Sake::Version::String) do |p|
-    p.rubyforge_name = 'sake'
+    p.rubyforge_name = 'err'
     p.summary = "Sake tastes great and helps maintain system-level Rake files."
     p.description = "Sake tastes great and helps maintain system-level Rake files."
     p.url = "http://errtheblog.com/"
