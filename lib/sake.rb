@@ -95,13 +95,13 @@ class Sake
     # $ sake -T db
     # $ sake -T file.rake
     # $ sake -T file.rake db
-    if index = @args.index('-T')
+    if (index = @args.index('-T')) || @args.empty?
       begin
         tasks   = TasksFile.parse(@args[index + 1]).tasks
         pattern = @args[index + 2]
       rescue
         tasks   = Store.tasks.sort
-        pattern = @args[index + 1]
+        pattern = index ? @args[index + 1] : nil
       end
 
       return show_tasks(tasks, pattern)
