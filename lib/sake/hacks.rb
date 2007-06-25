@@ -47,15 +47,15 @@ module Rake
   end
 end
 
-class String
-  def classify
-    tr(' ', '_').split('_').map { |s| s.capitalize }.join
-  end unless respond_to? :classify
-end 
-
-class Symbol
-  def classify
-    to_s.classify
+module Rake
+  class Task
+    # We want only run a sake task -- not any other matching
+    # or duplicate tasks.
+    def enhance(deps=nil, &block)
+      @prerequisites |= deps if deps
+      @actions = [block] if block_given? 
+      self
+    end
   end
 end
 
