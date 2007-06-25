@@ -1,3 +1,6 @@
+require "sake/actions/install"
+require "sake/actions/invoke_rake"
+
 class Sake
   class Action
     include Tasks
@@ -13,13 +16,15 @@ class Sake
       @@children << klass
     end
 
-    def self.choose_action(options = {})
-      task = :invoke_rake
+    def self.invoke(options = {})
+      action = @@children.detect do |child|
+        child.new(options).invoke
+      end
 
+      task = :invoke_rake
       if options[:target] && File.exists?(options[:target])
         task = :install
       end
-
       task
     end
 

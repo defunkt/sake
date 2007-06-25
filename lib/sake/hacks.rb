@@ -12,7 +12,9 @@ module Rake
       exit
     end
   end
+end
 
+module Rake
   class Application
     def printf(*args)
       args[0].sub!('rake', 'sake') if args[0].is_a? String
@@ -35,6 +37,12 @@ module Rake
         comment = "   # #{t.comment}" if t.comment
         printf "sake %-#{width}s#{comment}\n", t.name
       end
+    end
+
+    alias_method :sake_original_have_rakefile, :have_rakefile
+    def have_rakefile(*args)
+      @rakefile ||= ''
+      sake_original_have_rakefile(*args) || true
     end
   end
 end

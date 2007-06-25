@@ -21,8 +21,7 @@ class Sake
   end
 
   def invoke
-    require "sake/actions/#{action}"
-    Sake.const_get(action.classify).new(@options).invoke
+    Action.invoke(@options)
   end
 
   def self.tasks
@@ -31,10 +30,6 @@ class Sake
 
   ##
   # Command line parsing
-  def action
-    Action.choose_action(@options)
-  end
-
   def detect_target(args)
     args.detect { |arg| arg[/-|:\/\//].nil? }
   end
