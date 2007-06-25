@@ -2,22 +2,31 @@ class Sake
   class Action
     include Tasks
 
-    @@actions = []
+    @@children = []
+    def self.children; @@children end
 
-    def initialize(args, target, source)
-      @args   = args
-      @target = target
-      @source = source
+    def initialize(options = {})
+      @options = options
     end
 
     def self.inherited(klass)
-      @@actions << klass
+      @@children << klass
+    end
+
+    def self.choose_action(options = {})
+      task = :invoke_rake
+
+      if options[:target] && File.exists?(options[:target])
+        task = :install
+      end
+
+      task
     end
 
     ##
     # Task stuff
     def target_tasks
-      file_tasks(@target)
+      file_tasks(@options[:target])
     end
   end
 end

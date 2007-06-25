@@ -1,6 +1,4 @@
 class Sake
-  Rake = ::Rake
-
   class Loader < Rake::DefaultLoader
     def load(file)
       super
@@ -11,7 +9,6 @@ class Sake
   end
 
   class InvokeRake < Action
-
     def invoke 
       Rake.application = Rake::Application.new
 

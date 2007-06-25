@@ -13,14 +13,16 @@ class Sake
   extend Tasks
 
   def initialize(args = [])
-    @args   = args
-    @target = detect_target(args)
-    @source = detect_source(args)
+    @options = {
+      :args   => args,
+      :target => detect_target(args),
+      :source => detect_source(args)
+    }
   end
 
   def invoke
     require "sake/actions/#{action}"
-    Sake.const_get(action.classify).new(@args, @target, @source).invoke
+    Sake.const_get(action.classify).new(@options).invoke
   end
 
   def self.tasks
@@ -30,13 +32,7 @@ class Sake
   ##
   # Command line parsing
   def action
-    task = :invoke_rake
-
-    if @target && File.exists?(@target)
-      task = :install
-    end
-
-    task
+    Action.choose_action(@options)
   end
 
   def detect_target(args)
