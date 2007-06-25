@@ -11,7 +11,7 @@ require 'open-uri'
 begin
   require 'ruby2ruby'
 rescue LoadError
-  die "=> Sake requires the ruby2ruby gem and Ruby 1.8.6."
+  die "# Sake requires the ruby2ruby gem and Ruby 1.8.6."
 end
 require File.dirname(__FILE__) + '/help'
 
@@ -162,7 +162,7 @@ class Sake
   end
 
   def install(index)
-    die "=> I need a Rakefile." unless file = @args[index+1]
+    die "# I need a Rakefile." unless file = @args[index+1]
 
     tasks = TasksFile.parse(file).tasks
 
@@ -174,9 +174,9 @@ class Sake
     # No duplicates.
     tasks.each do |task|
       if Store.has_task? task
-        puts "!! Task `#{task}' already exists in #{Store.path}"
+        puts "# Task `#{task}' already exists in #{Store.path}"
       else
-        puts "=> Installing task `#{task}'"
+        puts "# Installing task `#{task}'"
         Store.add_task task
       end
     end
@@ -230,7 +230,7 @@ class Sake
     end
 
     # Failure.  On all counts.
-    error = "=> Can't find task (or file) `#{task}'"
+    error = "# Can't find task (or file) `#{task}'"
     error << " in #{file}" if file
     die error
   end
