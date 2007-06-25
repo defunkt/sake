@@ -16,7 +16,7 @@ Usage: sake [options]
     -i file            Install all tasks from <file>.
     -i file tasks      Install tasks from <file>.  Can be one or more tasks.
 
-    -u tasks           Uninstalls one or more tasks.
+    -u tasks           Uninstall one or more tasks.
 
     -e file            Show the source for all tasks from <file>.
     -e file tasks      Show the source for <task> as defined in <file>.  
