@@ -7,10 +7,11 @@
 require 'rubygems'
 require 'rake'
 require 'fileutils'
+require 'open-uri'
 begin
   require 'ruby2ruby'
 rescue LoadError
-  die "=> Sake requires the ruby2ruby gem.  Please install it.  Thanks!"
+  die "=> Sake requires the ruby2ruby gem and Ruby 1.8.6."
 end
 
 ##
@@ -77,7 +78,7 @@ class Sake
     # Examine a Rake file.
     # $ sake -T file.rake
     if (index = @args.index('-T')) && (file = @args[index+1]).is_file?
-      return show_tasks(TasksFile.new(file).tasks)
+      return show_tasks(TasksFile.parse(file).tasks)
 
     ##
     # Show all Sake tasks (but no local Rake tasks).
@@ -128,7 +129,7 @@ class Sake
       die "=> `#{file}' is not a Rakefile, sorry." 
     end
 
-    tasks = TasksFile.new(file).tasks
+    tasks = TasksFile.parse(file).tasks
 
     # We may want to install a specific task
     if target_task = @args[index + 2]
@@ -150,7 +151,7 @@ class Sake
   end
 
   def serve_tasks
-    require 'server'
+    require File.dirname(__FILE__) + '/server'
     Server.start(@args)
   end
 
@@ -169,19 +170,37 @@ class Sake
   # it will read the file and parse out the rake tasks, storing them in
   # a 'tasks' array.  This array can be accessed directly:
   #
-  #   file = Sake::TasksFile.new('Rakefile')
+  #   file = Sake::TasksFile.parse('Rakefile')
   #   puts file.tasks.inspect
+  #
+  # The parse method also works with remote files, as its implementation 
+  # uses open-uri's open().
+  #
+  #   Sake::TasksFile.parse('Rakefile')
+  #   Sake::TasksFile.parse('http://errtheblog.com/code/errake')
   class TasksFile
-    attr_reader :tasks, :file
+    attr_reader :tasks
 
-    def initialize(file)
+    ##
+    # The idea here is that we may be sucking in Rakefiles from an untrusted
+    # source.  While we're happy to let the user audit the code of any Rake
+    # task before running it, we'd rather not be responsible for executing a
+    # `rm -rf` in the Rakefile itself.  To ensure this, we need to set a 
+    # safelevel before parsing the Rakefile in question.
+    def self.parse(file)
+      raise "#{file} is not a Rakefile" unless file.is_file?
+
+      body = open(file).read
+
+      instance = new
+      Thread.new { instance.instance_eval "$SAFE = 3\n#{body}" }.join
+      instance
+    end
+
+    def initialize
       @namespace = []
       @tasks     = []
       @comment   = nil
-
-      if file.is_file?
-        instance_eval @file = File.read(file)
-      end
     end
 
     ##
@@ -322,7 +341,7 @@ class Sake
 
     def tasks_file
       FileUtils.touch(path) unless path.is_file?
-      @tasks_file ||= TasksFile.new(path)
+      @tasks_file ||= TasksFile.parse(path)
     end
 
     def path
