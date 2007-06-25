@@ -6,10 +6,10 @@ version = '0.1.0'
 begin
   require 'echoe'
 
-  Echoe.new('Sake', version) do |p|
-    p.rubyforge_name = 'Sake'
-    p.summary = "Sake tastes great and helps maintain system-level Rake files"
-    p.description = "Sake tastes great and helps maintain system-level Rake files"
+  Echoe.new('sake', version) do |p|
+    p.rubyforge_name = 'sake'
+    p.summary = "sake tastes great and helps maintain system-level Rake files"
+    p.description = "sake tastes great and helps maintain system-level Rake files"
     p.url = "http://errtheblog.com/"
     p.author = 'Chris Wanstrath'
     p.email = "chris@ozmm.org"
