@@ -211,6 +211,11 @@ class Sake
       task = @args[index + 1]
     end
 
+    # They didn't pass any args in, so just show the ~/.sake file
+    unless task
+      die Store.tasks.to_ruby
+    end
+
     # Try to find the task we think they asked for.
     tasks = file ? TasksFile.parse(file).tasks : Store.tasks
 
