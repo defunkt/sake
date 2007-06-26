@@ -68,7 +68,7 @@ class Sake
   module Version
     Major  = '1'
     Minor  = '0'
-    Tweak  = '3'
+    Tweak  = '4'
     String = [ Major, Minor, Tweak ].join('.')
   end
 
