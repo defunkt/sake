@@ -14,6 +14,7 @@ rescue LoadError
   die "# Sake requires the ruby2ruby gem and Ruby 1.8.6."
 end
 require File.dirname(__FILE__) + '/help'
+require File.dirname(__FILE__) + '/pastie'
 
 ##
 # Show all Sake tasks (but no local Rake tasks), optionally only those matching a pattern.
@@ -37,6 +38,10 @@ require File.dirname(__FILE__) + '/help'
 #
 # Uninstall an installed task.
 #   $ sake -u db:remigrate
+#
+# Stores the source of a task into a pastie (http://pastie.caboo.se).
+# Returns the url of the pastie to stdout.
+#   $ sake -p routes
 #
 # Can be passed one or more tasks.
 #
@@ -68,7 +73,7 @@ class Sake
   module Version
     Major  = '1'
     Minor  = '0'
-    Tweak  = '4'
+    Tweak  = '5'
     String = [ Major, Minor, Tweak ].join('.')
   end
 
@@ -123,7 +128,15 @@ class Sake
     #   $ sake -e routes
     #   $ sake -e Rakefile db:remigrate
     elsif index = @args.index('-e')
-      return examine(index)
+      die examine(index)
+
+    ##
+    # Save one or more tasks to Pastie (http://pastie.caboos.se) 
+    # then return the new Pastie's url 
+    #   $ sake -p routes
+    #   $ sake -p Rakefile db:remigrate
+    elsif index = @args.index('-p')
+      die Pastie.paste(examine(index))
 
     ##
     # Start a Mongrel handler which will serve local Rake tasks
@@ -213,20 +226,20 @@ class Sake
 
     # They didn't pass any args in, so just show the ~/.sake file
     unless task
-      die Store.tasks.to_ruby
+      return Store.tasks.to_ruby
     end
 
     # Try to find the task we think they asked for.
     tasks = file ? TasksFile.parse(file).tasks : Store.tasks
 
     if tasks[task]
-      die tasks[task].to_ruby 
+      return tasks[task].to_ruby 
     end
 
     # Didn't find the task.  See if it's a file and, if so, spit
     # it out.
     unless (tasks = TasksFile.parse(task).tasks).empty?
-      die tasks.to_ruby 
+      return tasks.to_ruby 
     end
 
     # Failure.  On all counts.

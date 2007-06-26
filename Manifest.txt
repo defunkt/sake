@@ -1,7 +1,8 @@
 ./bin/sake
+./lib/help.rb
+./lib/pastie.rb
 ./lib/sake.rb
 ./lib/server.rb
-./lib/help.rb
 ./Manifest.txt
 ./Rakefile
 ./README
