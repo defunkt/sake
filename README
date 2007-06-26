@@ -27,16 +27,14 @@ Install tasks from a Rakefile, optionally specifying specific tasks.
 Examine the source of a Rake task.
   $ sake -e routes
 
-Want to share just a few tasks, bundle them up?
-  $ sake -e routes remigrate > my_tasks.rake
-
 You can also examine the source of a task not yet installed. 
   $ sake -e Rakefile db:remigrate
 
-Uninstall an installed task.
+Uninstall an installed task.  (Can be passed one or more tasks.)
   $ sake -u db:remigrate
 
-Can be passed one or more tasks.
+Post a task to Pastie!
+  $ sake -p routes
 
 Invoke a Sake task.
   $ sake <taskname>
@@ -69,6 +67,7 @@ You can also daemonize your server for long term serving fun.
   * Josh Susser
   * Brian Donovan
   * Zack Chandler
+  * Dr Nic Williams
 
 == Author
 
