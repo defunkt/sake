@@ -41,7 +41,7 @@ require File.dirname(__FILE__) + '/pastie'
 #
 # Stores the source of a task into a pastie (http://pastie.caboo.se).
 # Returns the url of the pastie to stdout.
-#   $ sake -p routes
+#   $ sake -P routes
 #
 # Can be passed one or more tasks.
 #
@@ -73,7 +73,7 @@ class Sake
   module Version
     Major  = '1'
     Minor  = '0'
-    Tweak  = '5'
+    Tweak  = '6'
     String = [ Major, Minor, Tweak ].join('.')
   end
 
@@ -133,9 +133,9 @@ class Sake
     ##
     # Save one or more tasks to Pastie (http://pastie.caboos.se) 
     # then return the new Pastie's url 
-    #   $ sake -p routes
-    #   $ sake -p Rakefile db:remigrate
-    elsif index = @args.index('-p')
+    #   $ sake -P routes
+    #   $ sake -P Rakefile db:remigrate
+    elsif index = @args.index('-P')
       die Pastie.paste(examine(index))
 
     ##

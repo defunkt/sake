@@ -18,8 +18,10 @@ Usage: sake [options]
 
     -u tasks           Uninstall one or more tasks.
 
+    -e task            Show the source for task.
     -e file            Show the source for all tasks from <file>.
     -e file tasks      Show the source for <task> as defined in <file>.  
+    -P [file/tasks]    Send the source for tasks to Pastie (see -e for options).
 
     -S                 Start a Mongrel handler and serve your installed Sake tasks
                        over port 4567.
