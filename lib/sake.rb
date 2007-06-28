@@ -73,7 +73,7 @@ class Sake
   module Version
     Major  = '1'
     Minor  = '0'
-    Tweak  = '6'
+    Tweak  = '7'
     String = [ Major, Minor, Tweak ].join('.')
   end
 
@@ -456,16 +456,17 @@ class Sake
     end
 
     def tasks_file
-      FileUtils.touch(path) unless path.is_file?
       @tasks_file ||= TasksFile.parse(path)
     end
 
     def path
-      if PLATFORM =~ /win32/
+      path = if PLATFORM =~ /win32/
         win32_path
       else
         File.join(File.expand_path('~'), '.sake')
       end
+      FileUtils.touch(path) unless path.is_file?
+      path
     end
 
     def win32_path
