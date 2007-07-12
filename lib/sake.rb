@@ -73,7 +73,7 @@ class Sake
   module Version
     Major  = '1'
     Minor  = '0'
-    Tweak  = '7'
+    Tweak  = '8'
     String = [ Major, Minor, Tweak ].join('.')
   end
 
@@ -415,7 +415,7 @@ class Sake
     # Turn ourselves back into Rake task plaintext.
     def to_ruby
       out = ''
-      out << "desc '#{@comment}'\n" if @comment
+      out << "desc '#{@comment.gsub("'", "\\\\'")}'\n" if @comment
       out << "task '#{@name}'"
 
       if @deps.any?
