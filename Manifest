@@ -3,7 +3,7 @@
 ./lib/pastie.rb
 ./lib/sake.rb
 ./lib/server.rb
-./Manifest.txt
+./Manifest
 ./Rakefile
 ./README
 ./LICENSE
