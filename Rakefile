@@ -27,7 +27,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   files = ['README', 'LICENSE', 'lib/**/*.rb']
   rdoc.rdoc_files.add(files)
   rdoc.main = "README" # page to start on
-  rdoc.title = "Sake Documentation"
+  rdoc.title = "sake"
   rdoc.template = File.exists?(t="~/ruby/projects/err/rock/template.rb") ? t : "/var/www/rock/template.rb"
   rdoc.rdoc_dir = 'doc' # rdoc output folder
   rdoc.options << '--inline-source' << 'RDOC_PROJECT=sake'
