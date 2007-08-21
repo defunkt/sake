@@ -21,3 +21,14 @@ rescue LoadError => boom
   puts "You are missing a dependency required for meta-operations on this gem."
   puts "#{boom.to_s.capitalize}."
 end
+
+desc 'Generate RDoc documentation for Sake.'
+Rake::RDocTask.new(:rdoc) do |rdoc|
+  files = ['README', 'LICENSE', 'lib/**/*.rb']
+  rdoc.rdoc_files.add(files)
+  rdoc.main = "README" # page to start on
+  rdoc.title = "Sake Documentation"
+  rdoc.template = File.exists?(t="~/ruby/projects/err/rock/template.rb") ? t : "/var/www/rock/template.rb"
+  rdoc.rdoc_dir = 'doc' # rdoc output folder
+  rdoc.options << '--inline-source'
+end
