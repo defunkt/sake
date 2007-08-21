@@ -30,5 +30,5 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.title = "Sake Documentation"
   rdoc.template = File.exists?(t="~/ruby/projects/err/rock/template.rb") ? t : "/var/www/rock/template.rb"
   rdoc.rdoc_dir = 'doc' # rdoc output folder
-  rdoc.options << '--inline-source'
+  rdoc.options << '--inline-source' << 'RDOC_PROJECT=sake'
 end
