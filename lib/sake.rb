@@ -70,7 +70,7 @@ require File.dirname(__FILE__) + '/pastie'
 #   $ sake -S -d
 #
 class Sake
-  module Version
+  module Version #:nodoc:
     Major  = '1'
     Minor  = '0'
     Tweak  = '10'
@@ -267,6 +267,8 @@ class Sake
   #   tasks = TasksFile.parse('Rakefile').tasks
   #   task  = tasks['db:remigrate']
   class TasksArray < Array
+    ##
+    # Accepts a task name or index.
     def [](name_or_index)
       if name_or_index.is_a? String
         detect { |task| task.name == name_or_index }
@@ -432,12 +434,17 @@ class Sake
     end
 
     ##
-    # String-ish duck typing
+    # String-ish duck typing, sorting based on Task names
     def <=>(other)
       to_s <=> other.to_s
     end
 
+    ##
+    # The task name
     def to_s; @name end
+
+    ##
+    # Basically to_s.inspect
     def inspect; @name.inspect end
   end
 
@@ -455,10 +462,14 @@ class Sake
       tasks_file.send(*args, &block)
     end
 
+    ##
+    # A TaskFile object of our Store
     def tasks_file
       @tasks_file ||= TasksFile.parse(path)
     end
 
+    ##
+    # The platform-aware path to the Store
     def path
       path = if PLATFORM =~ /win32/
         win32_path
@@ -469,7 +480,7 @@ class Sake
       path
     end
 
-    def win32_path
+    def win32_path #:nodoc:
       unless File.exists?(win32home = ENV['HOMEDRIVE'] + ENV['HOMEPATH'])
         puts "# No HOMEDRIVE or HOMEPATH environment variable.",  
              "# Sake needs to know where it should save Rake tasks!"
@@ -478,6 +489,8 @@ class Sake
       end
     end
 
+    ##
+    # Wrote our current tasks_file to disk, overwriting the current Store.
     def save!
       File.open(path, 'w') do |file|
         file.puts tasks_file.to_ruby

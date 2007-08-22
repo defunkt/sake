@@ -2,7 +2,7 @@ require 'sake' unless defined? Sake
 require 'mongrel'
 
 class Sake
-  module Server
+  module Server #:nodoc:all
     extend self
 
     def start(args)

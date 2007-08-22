@@ -1,5 +1,5 @@
 class Sake
-  module Help
+  module Help #:nodoc:
     extend self
 
     def display

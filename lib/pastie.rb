@@ -1,6 +1,6 @@
 require 'tempfile'
 
-class Pastie
+class Pastie #:nodoc: all
   PASTE_URL = ENV['SAKE_PASTIE_URL'] || ENV['PASTIE_URL'] || 'http://pastie.caboo.se/pastes/create'
 
   def self.paste(text)
