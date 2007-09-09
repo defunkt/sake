@@ -11,7 +11,8 @@ require 'open-uri'
 begin
   require 'ruby2ruby'
 rescue LoadError
-  die "# Sake requires the ruby2ruby gem and Ruby 1.8.6."
+  puts "# Sake requires the ruby2ruby gem and Ruby 1.8.6."
+  exit
 end
 require File.dirname(__FILE__) + '/help'
 require File.dirname(__FILE__) + '/pastie'
