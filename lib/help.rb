@@ -12,6 +12,10 @@ Usage: sake [options]
     -T pattern         Show installed Sake tasks matching <pattern>.
     -T file            Show tasks in <file>.
     -T file pattern    Show tasks in <file>.
+    -Tv                Show all installed Sake tasks.
+    -Tv pattern        Show all installed Sake tasks matching <pattern>.
+    -Tv file           Show all tasks in <file>.
+    -Tv file pattern   Show all tasks in <file>.
 
     -i file            Install all tasks from <file>.
     -i file tasks      Install tasks from <file>.  Can be one or more tasks.

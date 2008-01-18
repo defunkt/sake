@@ -9,6 +9,9 @@ require 'rake'
 require 'fileutils'
 require 'open-uri'
 begin
+  gem 'ParseTree', '=2.0.1'
+  require 'parse_tree'
+  gem 'ruby2ruby', '=1.1.7'
   require 'ruby2ruby'
 rescue LoadError
   puts "# Sake requires the ruby2ruby gem and Ruby 1.8.6."
@@ -74,7 +77,7 @@ class Sake
   module Version #:nodoc:
     Major  = '1'
     Minor  = '0'
-    Tweak  = '11'
+    Tweak  = '12'
     String = [ Major, Minor, Tweak ].join('.')
   end
 
@@ -101,7 +104,13 @@ class Sake
     # $ sake -T db
     # $ sake -T file.rake
     # $ sake -T file.rake db
-    if (index = @args.index('-T')) || @args.empty?
+    # Show all Sake tasks in the store or in a file, optionally searching for a pattern.
+    # $ sake -Tv
+    # $ sake -Tv db
+    # $ sake -Tv file.rake
+    # $ sake -Tv file.rake db
+    if (index = @args.index('-T') || @args.index('-Tv')) || @args.empty?
+      display_hidden = true if @args.index('-Tv') 
       begin
         tasks   = TasksFile.parse(@args[index + 1]).tasks
         pattern = @args[index + 2]
@@ -109,8 +118,7 @@ class Sake
         tasks   = Store.tasks.sort
         pattern = index ? @args[index + 1] : nil
       end
-
-      return show_tasks(tasks, pattern)
+      return show_tasks(tasks, pattern, display_hidden)
 
     ##
     # Install a Rakefile or a single Rake task
@@ -171,8 +179,8 @@ class Sake
 
   private
 
-  def show_tasks(tasks = [], pattern = nil)
-    Rake.application.show(tasks, pattern)
+  def show_tasks(tasks = [], pattern = nil, display_hidden = nil)
+    Rake.application.show(tasks, pattern, display_hidden)
   end
 
   def install(index)
@@ -511,7 +519,7 @@ module Rake # :nodoc: all
 
     ##
     # Show tasks that don't have comments'
-    def display_tasks_and_comments(tasks = nil, pattern = nil)
+    def display_tasks_and_comments(tasks = nil, pattern = nil, display_hidden = nil)
       tasks ||= self.tasks
 
       if pattern ||= options.show_task_pattern
@@ -522,7 +530,11 @@ module Rake # :nodoc: all
 
       tasks.each do |t|
         comment = "   # #{t.comment}" if t.comment
-        printf "sake %-#{width}s#{comment}\n", t.name
+        if display_hidden
+          printf "sake %-#{width}s#{comment}\n", t.name
+        else
+          printf "sake %-#{width}s#{comment}\n", t.name if t.name && t.comment
+        end
       end
     end
     alias_method :show, :display_tasks_and_comments
