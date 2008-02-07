@@ -77,7 +77,7 @@ class Sake
   module Version #:nodoc:
     Major  = '1'
     Minor  = '0'
-    Tweak  = '12'
+    Tweak  = '13'
     String = [ Major, Minor, Tweak ].join('.')
   end
 
@@ -560,6 +560,11 @@ end
 class Nil # :nodoc: 
   def is_file?
     false
+  end
+
+  # under the evil
+  def method_missing(*args, &block)
+    super
   end
 end
 
