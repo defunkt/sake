@@ -322,6 +322,13 @@ class Sake
       instance = new
       Thread.new { instance.instance_eval "$SAFE = 3\n#{body}" }.join
       instance
+      
+    rescue Errno::ENOENT
+      STDERR.puts "Error: The file '#{file}' doesn't exist!"
+      exit 1
+    rescue OpenURI::HTTPError
+      STDERR.puts "Error: '#{file}' not found! (OpenURI::HTTPError)"
+      exit 1
     end
 
     def initialize
