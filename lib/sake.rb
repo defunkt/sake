@@ -9,9 +9,9 @@ require 'rake'
 require 'fileutils'
 require 'open-uri'
 begin
-  gem 'ParseTree', '=2.0.1'
+  gem 'ParseTree', '=2.1.1'
   require 'parse_tree'
-  gem 'ruby2ruby', '=1.1.7'
+  gem 'ruby2ruby', '=1.1.8'
   require 'ruby2ruby'
 rescue LoadError
   puts "# Sake requires the ruby2ruby gem and Ruby 1.8.6."
@@ -77,7 +77,7 @@ class Sake
   module Version #:nodoc:
     Major  = '1'
     Minor  = '0'
-    Tweak  = '13'
+    Tweak  = '14'
     String = [ Major, Minor, Tweak ].join('.')
   end
 

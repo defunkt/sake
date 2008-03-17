@@ -13,7 +13,7 @@ begin
     p.url          = "http://errtheblog.com/"
     p.author       = 'Chris Wanstrath'
     p.email        = "chris@ozmm.org"
-    p.dependencies = ['ParseTree =2.0.1', 'ruby2ruby =1.1.7']
+    p.dependencies = ['ParseTree =2.1.1', 'ruby2ruby =1.1.8']
   end
 
 rescue LoadError => boom
