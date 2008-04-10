@@ -98,6 +98,11 @@ class Sake
   # (like version, which prints a Sake version then trusts Rake to do
   # likewise).
   def run
+    if index = @args.index("--force")
+      @args.delete("--force")
+      @force = true
+    end
+    
     ##
     # Show Sake tasks in the store or in a file, optionally searching for a pattern.
     # $ sake -T 
@@ -206,12 +211,17 @@ class Sake
 
     # No duplicates.
     tasks.each do |task|
-      if Store.has_task? task
+      if Store.has_task?(task) && !@force
         puts "# Task `#{task}' already exists in #{Store.path}"
+        next
+      elsif Store.has_task?(task)
+        puts "# Task `#{task}' already exists. Updating it."
+        Store.remove_task(task)
       else
-        puts "# Installing task `#{task}'"
-        Store.add_task task
+        puts "# Installing task `#{task}'"        
       end
+      
+      Store.add_task task
     end
 
     # Commit.
