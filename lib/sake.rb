@@ -114,11 +114,19 @@ class Sake
       begin
         tasks   = TasksFile.parse(@args[index + 1]).tasks
         pattern = @args[index + 2]
-      rescue
+      rescue => missing_file
         tasks   = Store.tasks.sort
         pattern = index ? @args[index + 1] : nil
       end
-      return show_tasks(tasks, pattern, display_hidden)
+      output = show_tasks(tasks, pattern, display_hidden)
+      if output.empty? and @args.size > 1  # show_tasks didn't show any tasks
+        if missing_file
+          die "# Can't find file (or task) `#{@args[index + 1]}'"
+        elsif pattern
+          die "# No matching tasks for `#{pattern}'"
+        end
+      end
+      return output
 
     ##
     # Install a Rakefile or a single Rake task
@@ -322,13 +330,6 @@ class Sake
       instance = new
       Thread.new { instance.instance_eval "$SAFE = 3\n#{body}" }.join
       instance
-      
-    rescue Errno::ENOENT
-      STDERR.puts "Error: The file '#{file}' doesn't exist!"
-      exit 1
-    rescue OpenURI::HTTPError
-      STDERR.puts "Error: '#{file}' not found! (OpenURI::HTTPError)"
-      exit 1
     end
 
     def initialize
