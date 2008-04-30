@@ -114,16 +114,17 @@ class Sake
       begin
         tasks   = TasksFile.parse(@args[index + 1]).tasks
         pattern = @args[index + 2]
-      rescue => missing_file
+      rescue => parse_error
         tasks   = Store.tasks.sort
         pattern = index ? @args[index + 1] : nil
       end
       output = show_tasks(tasks, pattern, display_hidden)
       if output.empty? and @args.size > 1  # show_tasks didn't show any tasks
-        if missing_file
+        case parse_error
+        when Errno::ENOENT, OpenURI::HTTPError
           die "# Can't find file (or task) `#{@args[index + 1]}'"
-        elsif pattern
-          die "# No matching tasks for `#{pattern}'"
+        else
+          die "# No matching tasks for `#{pattern}'" if pattern
         end
       end
       return output
