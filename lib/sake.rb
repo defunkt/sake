@@ -319,6 +319,7 @@ class Sake
   #   Sake::TasksFile.parse('Rakefile')
   #   Sake::TasksFile.parse('http://errtheblog.com/code/errake')
   class TasksFile
+    include Rake::TaskManager
     attr_reader :tasks
 
     ##
@@ -363,20 +364,16 @@ class Sake
 
     ## 
     # Define a task and any dependencies it may have.
-    def task(name, &block)
-      # If we're passed a hash, we know it has one key (the name of
-      # the task) pointing to a single or multiple dependencies. 
-      if name.is_a? Hash
-        deps = name.values.first 
-        name = name.keys.first
-      end
+    def task(*args, &block)
+      # Use Rake::TaskManager method to get task details
+      task_name, arg_names, deps = resolve_args(args)
 
       # Our namespace is really just a convenience method.  Essentially,
       # a namespace is just part of the task name.
-      name = [ @namespace, name ].flatten * ':'
+      task_name = [ @namespace, task_name ].flatten * ':'
 
       # Sake's version of a rake task
-      task = Task.new(name, deps, @comment, &block)
+      task = Task.new(task_name, arg_names, deps, @comment, &block)
 
       @tasks << task
 
@@ -426,9 +423,10 @@ class Sake
   class Task
     attr_reader :name, :comment
 
-    def initialize(name, deps = nil, comment = nil, &block)
+    def initialize(name, args = nil, deps = nil, comment = nil, &block)
       @name    = name
       @comment = comment
+      @args    = Array(args)
       @deps    = Array(deps)
       @body    = block
     end
@@ -440,12 +438,21 @@ class Sake
       out << "desc '#{@comment.gsub("'", "\\\\'")}'\n" if @comment
       out << "task '#{@name}'"
 
-      if @deps.any?
-        deps = @deps.map { |dep| "'#{dep}'" }.join(', ')
-        out << " => [ #{deps} ]" 
+      if @args.any?
+        args = @args.map { |arg| ":#{arg}" }.join(', ')
+        out << ", #{args} "
       end
 
-      out << " do\n"
+      if @deps.any?
+        deps = @deps.map { |dep| "'#{dep}'" }.join(', ')
+        out << ", :needs => [ #{deps} ]"
+      end
+
+      if @args.any?
+        out << " do |t, args|\n"
+      else
+        out << " do\n"
+      end
       
       # get rid of the proc { / } lines
       out << @body.to_ruby.split("\n")[1...-1].join("\n") rescue nil
