@@ -123,6 +123,8 @@ class Sake
         case parse_error
         when Errno::ENOENT, OpenURI::HTTPError
           die "# Can't find file (or task) `#{@args[index + 1]}'"
+        when SecurityError
+          die "# SecurityError parsing `#{@args[index + 1]}'"
         else
           die "# No matching tasks for `#{pattern}'" if pattern
         end
