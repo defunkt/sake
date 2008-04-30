@@ -509,6 +509,7 @@ class Sake
     ##
     # Wrote our current tasks_file to disk, overwriting the current Store.
     def save!
+      tasks_file # ensure the tasks_file is loaded before overwriting
       File.open(path, 'w') do |file|
         file.puts tasks_file.to_ruby
       end
