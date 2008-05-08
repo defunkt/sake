@@ -329,7 +329,7 @@ class Sake
     # `rm -rf` in the Rakefile itself.  To ensure this, we need to set a 
     # safelevel before parsing the Rakefile in question.
     def self.parse(file)
-      body = open(file).read
+      body = (file == "-" ? $stdin : open(file)).read
 
       instance = new
       Thread.new { instance.instance_eval "$SAFE = 3\n#{body}" }.join
